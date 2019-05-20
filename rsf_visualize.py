@@ -9,7 +9,7 @@ from sklearn import model_selection
 import pdb
 import rsf_load_data
 
-def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix="", debug=False):
+def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix="", debug=False, verbose=True):
     HIST_DIR = "rsf_histograms_" + dir_suffix + "/"
     if not os.path.exists(HIST_DIR):
         os.mkdir(HIST_DIR)
@@ -37,6 +37,8 @@ def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix
         plt.hist(rsf_df[hdr].loc[rsf_df["y"]==1], bins=bins, log=log_y,alpha=0.5, label='liq', edgecolor='k')
         plt.legend(loc='upper right')
         plt.savefig(fpath)
+        if verbose:
+            print("finished plotting histogram for ", hdr)
         plt.clf()
 
     return
@@ -47,11 +49,12 @@ def main():
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--nbins", type=int, default=100)
     parser.add_argument("--no_log_y", action="store_false")
-
+    parser.add_argument("--not_verbose", action="store_false")
     opts = parser.parse_args()
 
     plot_rsf_histograms(log_y=opts.no_log_y, nbins=opts.nbins,
-                        dir_suffix=opts.dir_suffix, debug=opts.debug)
+                        dir_suffix=opts.dir_suffix, debug=opts.debug,
+                        verbose=opts.not_verbose)
     return
 
 if __name__ == "__main__":
