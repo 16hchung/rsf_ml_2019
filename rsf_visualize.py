@@ -50,7 +50,7 @@ def main():
 
     opts = parser.parse_args()
 
-    plot_rsf_histograms(log_y=(not opts.no_log_y), nbins=opts.nbins,
+    plot_rsf_histograms(log_y=opts.no_log_y, nbins=opts.nbins,
                         dir_suffix=opts.dir_suffix, debug=opts.debug)
     return
 
