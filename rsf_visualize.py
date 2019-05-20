@@ -1,3 +1,5 @@
+import argparse
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,8 +9,11 @@ from sklearn import model_selection
 import pdb
 import rsf_load_data
 
-def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100):
-    HIST_DIR = "rsf_histograms/"
+def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix="", debug=False):
+    HIST_DIR = "rsf_histograms_" + dir_suffix + "/"
+    if not os.path.exists(HIST_DIR):
+        os.mkdir(HIST_DIR)
+        print("Directory " , HIST_DIR ,  " Created ")
 
     rsf_df, FTR_HDRS = rsf_load_data.load_rsfs_df()
     liq_scaler = None
@@ -16,6 +21,8 @@ def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100):
     if scale:
         scaler, rsf_df[FTR_HDRS] = rsf_load_data.scale_data(rsf_df[FTR_HDRS])
     for hdr in FTR_HDRS:
+        if debug:
+            pdb.set_trace()
         fpath_scaled = HIST_DIR + "scaled_hist" + hdr + ".png"
         fpath        = fpath_scaled if scale else HIST_DIR + "hist" + hdr + ".png"
         minrsf = rsf_df[hdr].min()
@@ -34,4 +41,18 @@ def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100):
 
     return
 
-plot_rsf_histograms()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir_suffix", default="")
+    parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--nbins", type=int, default=100)
+    parser.add_argument("--no_log_y", action="store_false")
+
+    opts = parser.parse_args()
+
+    plot_rsf_histograms(log_y=(not opts.no_log_y), nbins=opts.nbins,
+                        dir_suffix=opts.dir_suffix, debug=opts.debug)
+    return
+
+if __name__ == "__main__":
+    main()
