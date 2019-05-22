@@ -1,4 +1,5 @@
 import pandas as pd
+from math import *
 import numpy as np
 from sklearn import preprocessing
 import pdb
@@ -29,5 +30,18 @@ def load_rsfs_df(liq_fname="rsf_data_liq_10000.dat", sol_fname="rsf_data_ice_100
     df = pd.concat([df_ice, df_liq], ignore_index=True)
  
     return df, FTR_HDRS
+
+def pseudo_rsfs_data(X,y,hdrs):
+    n, d = X.shape
+    pseudo_X = pd.DataFrame()
+    for hdr in hdrs:
+        liq_mean = X[hdr].loc[y==1].mean()
+        ice_mean = X[hdr].loc[y==0].mean()
+        liq_var  = X[hdr].loc[y==1].var()
+        ice_var  = X[hdr].loc[y==0].var()
+        pseudo_ice = np.random.normal(loc=ice_mean, scale=sqrt(ice_var), size=int(n/2))
+        pseudo_liq = np.random.normal(loc=liq_mean, scale=sqrt(liq_var), size=int(n/2))
+        pseudo_X[hdr] = np.concatenate((pseudo_ice, pseudo_liq),axis=None)
+    return pseudo_X
 
 

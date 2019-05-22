@@ -66,6 +66,7 @@ def main():
     parser.add_argument("--plot_hist", action="store_true")
     parser.add_argument("--plot_tsne", action="store_true")
     parser.add_argument("--tsne_fname", type=str, default="")
+    parser.add_argument("--tsne_fake_rsfs", action="store_true")
     parser.add_argument("--dir_suffix", default="")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--nbins", type=int, default=100)
@@ -79,6 +80,10 @@ def main():
                             dir_suffix=opts.dir_suffix, debug=opts.debug,
                             verbose=opts.not_verbose)
     if opts.plot_tsne:
+        if opts.tsne_fake_rsfs:
+            pseudo_X = rsf_load_data.pseudo_rsfs_data(rsf_df[FTR_HDRS], rsf_df["y"], FTR_HDRS)
+            pseudo_X["y"] = rsf_df["y"]
+            rsf_df = pseudo_X
         plot_rsf_tsne(rsf_df, FTR_HDRS, fname=opts.tsne_fname)
     return
 

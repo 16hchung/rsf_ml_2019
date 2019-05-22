@@ -24,19 +24,6 @@ def compile_rsfs_data():
     y_train = df_train[Y_HDR]
     return X_train, y_train, X_val, y_val, FTR_HDRS
 
-def pseudo_rsfs_data(X,y,hdrs):
-    n, d = X.shape
-    pseudo_X = pd.DataFrame()
-    for hdr in hdrs:
-        liq_mean = X[hdr].loc[y==1].mean()
-        ice_mean = X[hdr].loc[y==0].mean()
-        liq_var  = X[hdr].loc[y==1].var()
-        ice_var  = X[hdr].loc[y==0].var()
-        pseudo_ice = np.random.normal(loc=ice_mean, scale=sqrt(ice_var), size=int(n/2))
-        pseudo_liq = np.random.normal(loc=liq_mean, scale=sqrt(liq_var), size=int(n/2))
-        pseudo_X[hdr] = np.concatenate((pseudo_ice, pseudo_liq),axis=None)
-    return pseudo_X
-
 def scale_data(X):
     scaler = preprocessing.StandardScaler().fit(X)
     return scaler, scaler.transform(X)
@@ -96,7 +83,7 @@ def validation_curve(X, y, fname="linearsvm_validation.png"):
 
 X_train, y_train, X_val, y_val, hdrs = compile_rsfs_data()
 pdb.set_trace()
-pseudo_X = pseudo_rsfs_data(X_train, y_train, hdrs)
+pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs)
 #scaler, X_train = rsf_load_data.scale_data(X_train)
 #pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
 #validation_curve(pseudo_X, y_train, "pseudorsfs_linearsvm_validation.png")
