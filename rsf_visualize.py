@@ -49,8 +49,9 @@ def plot_rsf_histograms(rsf_df, FTR_HDRS, scale=True, trim=True, log_y=True, nbi
 def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
     # run tsne on rsf matrix
     X_transform = manifold.TSNE(n_components=2).fit_transform(rsf_df[FTR_HDRS])
-    X_transform_liq = X_transform[rsf_df["y"]]
+    X_transform_liq = X_transform[rsf_df["y"]==1]
     X_transform_ice = X_transform[rsf_df["y"]==0]
+    pdb.set_trace()
     # plot
     if fname == "":
         fname = "rsf_tsne_" + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M")
@@ -64,6 +65,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--plot_hist", action="store_true")
     parser.add_argument("--plot_tsne", action="store_true")
+    parser.add_argument("--tsne_fname", type=str, default="")
     parser.add_argument("--dir_suffix", default="")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--nbins", type=int, default=100)
@@ -77,7 +79,7 @@ def main():
                             dir_suffix=opts.dir_suffix, debug=opts.debug,
                             verbose=opts.not_verbose)
     if opts.plot_tsne:
-        plot_rsf_tsne(rsf_df, FTR_HDRS)
+        plot_rsf_tsne(rsf_df, FTR_HDRS, fname=opts.tsne_fname)
     return
 
 if __name__ == "__main__":
