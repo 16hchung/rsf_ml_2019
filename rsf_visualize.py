@@ -1,3 +1,4 @@
+import datetime
 import argparse
 import os
 import pandas as pd
@@ -45,11 +46,18 @@ def plot_rsf_histograms(rsf_df, FTR_HDRS, scale=True, trim=True, log_y=True, nbi
 
     return
 
-def plot_rsf_tsne(rsf_df, FTR_HDRS):
-    #pdb.set_trace()
+def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
+    # run tsne on rsf matrix
     X_transform = manifold.TSNE(n_components=2).fit_transform(rsf_df[FTR_HDRS])
-    plt.scatter(X_transform[:,0],X_transform[:,1])
-    plt.savefig("trying.png")
+    X_transform_liq = X_transform[rsf_df["y"]]
+    X_transform_ice = X_transform[rsf_df["y"]==0]
+    # plot
+    if fname == "":
+        fname = "rsf_tsne_" + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M")
+    plt.scatter(X_transform_liq[:,0], X_transform_liq[:,1], alpha=.5, label="liq", edgecolor="k")
+    plt.scatter(X_transform_ice[:,0], X_transform_ice[:,1], alpha=.5, label="ice", edgecolor="k")
+    plt.legend(loc='upper right')
+    plt.savefig(fname)
     return
 
 def main():
