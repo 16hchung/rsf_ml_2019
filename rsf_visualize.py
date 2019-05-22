@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn import preprocessing
 from sklearn import model_selection
+from sklearn import manifold
 import pdb
 import rsf_load_data
 
-def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix="", debug=False, verbose=True):
+def plot_rsf_histograms(rsf_df, FTR_HDRS, scale=True, trim=True, log_y=True, nbins=100, dir_suffix="", debug=False, verbose=True):
     HIST_DIR = "rsf_histograms_" + dir_suffix + "/"
     if not os.path.exists(HIST_DIR):
         os.mkdir(HIST_DIR)
         print("Directory " , HIST_DIR ,  " Created ")
 
-    rsf_df, FTR_HDRS = rsf_load_data.load_rsfs_df()
     liq_scaler = None
     sol_scaler = None
     if scale:
@@ -27,7 +27,9 @@ def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix
         fpath        = fpath_scaled if scale else HIST_DIR + "hist" + hdr + ".png"
         minrsf = rsf_df[hdr].min()
         maxrsf = rsf_df[hdr].max()
-        if minrsf == 0 and maxrsf == 0: #if all 
+        if minrsf == 0 and maxrsf == 0: #if all at this mu are 0 then skip
+            if verbose:
+                print("skipping ", hdr)
             continue
         if trim:
             minrsf = -2
@@ -43,8 +45,17 @@ def plot_rsf_histograms(scale=True, trim=True, log_y=True, nbins=100, dir_suffix
 
     return
 
+def plot_rsf_tsne(rsf_df, FTR_HDRS):
+    #pdb.set_trace()
+    X_transform = manifold.TSNE(n_components=2).fit_transform(rsf_df[FTR_HDRS])
+    plt.scatter(X_transform[:,0],X_transform[:,1])
+    plt.savefig("trying.png")
+    return
+
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--plot_hist", action="store_true")
+    parser.add_argument("--plot_tsne", action="store_true")
     parser.add_argument("--dir_suffix", default="")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--nbins", type=int, default=100)
@@ -52,9 +63,13 @@ def main():
     parser.add_argument("--not_verbose", action="store_false")
     opts = parser.parse_args()
 
-    plot_rsf_histograms(log_y=opts.no_log_y, nbins=opts.nbins,
-                        dir_suffix=opts.dir_suffix, debug=opts.debug,
-                        verbose=opts.not_verbose)
+    rsf_df, FTR_HDRS = rsf_load_data.load_rsfs_df()
+    if opts.plot_hist:
+        plot_rsf_histograms(rsf_df, FTR_HDRS, log_y=opts.no_log_y, nbins=opts.nbins,
+                            dir_suffix=opts.dir_suffix, debug=opts.debug,
+                            verbose=opts.not_verbose)
+    if opts.plot_tsne:
+        plot_rsf_tsne(rsf_df, FTR_HDRS)
     return
 
 if __name__ == "__main__":
