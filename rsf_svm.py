@@ -107,16 +107,17 @@ pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs)
 #validation_curve(pseudo_X, y_train, "pseudorsfs_linearsvm_validation.png")
 #learning_curve(pseudo_X, y_train, fname="pseudorsfs_linearsvm_learning.png")
 
-plot_SVM_confidence(pseudo_X, y_train, 
-                    sep_val_confidence=True,
-                    #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
-                    X_val=X_val, y_val=y_val, 
-                    #nbins=200,
-                    fname="fake_confidence_no_whiten.png", 
-                    title="Decision function for Linear SVM trained on fake RSFs, non-whitened")
-#plot_SVM_confidence(X_train, y_train,
-#                    fname="confidence.png", 
-#                    title="Decision function for Linear SVM training data")
+#plot_SVM_confidence(pseudo_X, y_train, 
+#                    sep_val_confidence=True,
+#                    #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
+#                    X_val=X_val, y_val=y_val, 
+#                    #nbins=200,
+#                    fname="fake_confidence_no_whiten.png", 
+#                    title="Decision function for Linear SVM trained on fake RSFs, non-whitened")
+plot_SVM_confidence(X_train, y_train,
+                    X_val=pseudo_X, y_val=y_train,
+                    fname="confidence_on_fake.png", 
+                    title="Decision function for Linear SVM trained on fake rsfs")
 #simple_SVM(X_train, y_train, X_val, y_val)
 #simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_train), y_train)
 #simple_SVM(X_train, y_train, scaler.transform(X_val), y_val)
