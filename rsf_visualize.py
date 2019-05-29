@@ -63,6 +63,7 @@ def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
         plt.scatter(X_transform_ice[:,0], X_transform_ice[:,1], alpha=.5, label="ice", edgecolor="k")
         plt.legend(loc='upper right')
         plt.savefig(fname)
+        plt.clf()
         print("plotted for perplexity ", p)
     return
 
