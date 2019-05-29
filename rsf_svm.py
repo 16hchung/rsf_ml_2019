@@ -111,7 +111,7 @@ plot_SVM_confidence(pseudo_X, y_train,
                     sep_val_confidence=True,
                     #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
                     X_val=X_val, y_val=y_val, 
-                    nbins=200,
+                    #nbins=200,
                     fname="fake_confidence_no_whiten.png", 
                     title="Decision function for Linear SVM trained on fake RSFs, non-whitened")
 #plot_SVM_confidence(X_train, y_train,
