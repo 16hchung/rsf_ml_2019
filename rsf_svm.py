@@ -81,7 +81,7 @@ def validation_curve(X, y, fname="linearsvm_validation.png"):
     plot_scores(train_scores, test_scores, "Validation Curve with SVM", param_range, 
                 fname, plt.semilogx, "C")
 
-def plot_SVM_confidence(X, y, sep_val_confidence=False, X_val=None, y_val=None, fname="confidence.png", title="Decision Function"):
+def plot_SVM_confidence(X, y, sep_val_confidence=False, X_val=None, y_val=None, nbins=100, fname="confidence.png", title="Decision Function"):
     if not sep_val_confidence:
         X_val = X
         y_val = y
@@ -91,7 +91,7 @@ def plot_SVM_confidence(X, y, sep_val_confidence=False, X_val=None, y_val=None, 
     maxconf = confidence.max()
     minconf = confidence.min()
     
-    bins = np.linspace(minconf, maxconf, 100)
+    bins = np.linspace(minconf, maxconf, nbins)
     plt.hist(confidence[y_val==1], bins=bins, alpha=.5, label="liq", edgecolor="k")
     plt.hist(confidence[y_val==0], bins=bins, alpha=.6, label="ice", edgecolor="k")
     plt.title(title)
@@ -110,11 +110,12 @@ pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
 plot_SVM_confidence(pseudo_X, y_train, 
                     sep_val_confidence=True,
                     X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
+                    nbins=200,
                     fname="fake_confidence.png", 
                     title="Decision function for Linear SVM trained on fake RSFs")
-plot_SVM_confidence(X_train, y_train,
-                    fname="confidence.png", 
-                    title="Decision function for Linear SVM training data")
+#plot_SVM_confidence(X_train, y_train,
+#                    fname="confidence.png", 
+#                    title="Decision function for Linear SVM training data")
 #simple_SVM(X_train, y_train, X_val, y_val)
 #simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_train), y_train)
 #simple_SVM(X_train, y_train, scaler.transform(X_val), y_val)
