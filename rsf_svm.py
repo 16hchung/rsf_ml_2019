@@ -30,7 +30,7 @@ def scale_data(X):
 
 
 def simple_SVM(X_train, y_train, X_val, y_val):
-    clf = svm.LinearSVC(C=10)
+    clf = svm.LinearSVC()
     clf.fit(X_train, y_train)
     val_ypred = clf.predict(X_val)
 
@@ -85,10 +85,10 @@ X_train, y_train, X_val, y_val, hdrs = compile_rsfs_data()
 pdb.set_trace()
 pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs)
 #scaler, X_train = rsf_load_data.scale_data(X_train)
-#pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
+pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
 #validation_curve(pseudo_X, y_train, "pseudorsfs_linearsvm_validation.png")
 #learning_curve(pseudo_X, y_train, fname="pseudorsfs_linearsvm_learning.png")
 
-simple_SVM(pseudo_X, y_train, X_train, y_train)
+simple_SVM(X_train, y_train, X_val, y_val)
 #simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_train), y_train)
 #simple_SVM(X_train, y_train, scaler.transform(X_val), y_val)

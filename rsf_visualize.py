@@ -47,18 +47,23 @@ def plot_rsf_histograms(rsf_df, FTR_HDRS, scale=True, trim=True, log_y=True, nbi
     return
 
 def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
-    # run tsne on rsf matrix
-    X_transform = manifold.TSNE(n_components=2).fit_transform(rsf_df[FTR_HDRS])
-    X_transform_liq = X_transform[rsf_df["y"]==1]
-    X_transform_ice = X_transform[rsf_df["y"]==0]
-    pdb.set_trace()
-    # plot
-    if fname == "":
-        fname = "rsf_tsne_" + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M")
-    plt.scatter(X_transform_liq[:,0], X_transform_liq[:,1], alpha=.5, label="liq", edgecolor="k")
-    plt.scatter(X_transform_ice[:,0], X_transform_ice[:,1], alpha=.5, label="ice", edgecolor="k")
-    plt.legend(loc='upper right')
-    plt.savefig(fname)
+    TSNE_DIR = "rsf_tsne_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M") + "/"
+    if not os.path.exists(TSNE_DIR):
+        os.mkdir(TSNE_DIR)
+        print("Directory " , TSNE_DIR ,  " Created ")
+
+    for p in range(10, 200, 10):
+        # run tsne on rsf matrix
+        X_transform = manifold.TSNE(n_components=2, perplexity=p).fit_transform(rsf_df[FTR_HDRS])
+        X_transform_liq = X_transform[rsf_df["y"]==1]
+        X_transform_ice = X_transform[rsf_df["y"]==0]
+        # plot
+        fname = TSNE_DIR + "tsne_perplex_" + str(p) + ".png"
+        plt.scatter(X_transform_liq[:,0], X_transform_liq[:,1], alpha=.5, label="liq", edgecolor="k")
+        plt.scatter(X_transform_ice[:,0], X_transform_ice[:,1], alpha=.5, label="ice", edgecolor="k")
+        plt.legend(loc='upper right')
+        plt.savefig(fname)
+        print("plotted for perplexity ", p)
     return
 
 def main():
