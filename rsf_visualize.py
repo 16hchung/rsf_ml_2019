@@ -67,15 +67,25 @@ def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
         print("plotted for perplexity ", p)
     return
 
-def plot_rsf_means(rsf_df, FTR_HDRS, fname="means_of_rsfs.png"):
-    #pdb.set_trace()
+def plot_rsf_means(rsf_df, FTR_HDRS, fname="means_of_rsfs_minmax_errbars.png"):
+    pdb.set_trace()
     liq_means = rsf_df[rsf_df["y"] == 1].mean()
-    liq_stds  = rsf_df[rsf_df["y"] == 1].std()
+    #liq_stds  = rsf_df[rsf_df["y"] == 1].std()
+    liq_mins  = rsf_df[rsf_df["y"] == 1].min()
+    liq_maxs  = rsf_df[rsf_df["y"] == 1].max()
+    liq_error = np.array([liq_mins, liq_maxs])
+    
     ice_means = rsf_df[rsf_df["y"] == 0].mean()
-    ice_stds  = rsf_df[rsf_df["y"] == 0].std()
+    ice_mins  = rsf_df[rsf_df["y"] == 0].min()
+    ice_maxs  = rsf_df[rsf_df["y"] == 0].max()
+    #ice_stds  = rsf_df[rsf_df["y"] == 0].std()
+    ice_error = np.array([ice_mins, ice_maxs])
+    
     mus = [float(s[2:]) for s in FTR_HDRS]
-    plt.errorbar(mus, liq_means[FTR_HDRS], liq_stds[FTR_HDRS], capsize=3, label="liq")
-    plt.errorbar(mus, ice_means[FTR_HDRS], ice_stds[FTR_HDRS], capsize=3, label="ice")
+    plt.errorbar(mus, liq_means[FTR_HDRS], liq_error[:, :-1], capsize=3, label="liq")
+    plt.errorbar(mus, ice_means[FTR_HDRS], ice_error[:, :-1], capsize=3, label="ice")
+    #plt.errorbar(mus, liq_means[FTR_HDRS], liq_std[FTR_HDRS], capsize=3, label="liq")
+    #plt.errorbar(mus, ice_means[FTR_HDRS], ice_std[FTR_HDRS], capsize=3, label="ice")
     plt.legend(loc="upper right")
     plt.savefig(fname)
     plt.clf()
