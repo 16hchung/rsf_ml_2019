@@ -67,10 +67,24 @@ def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
         print("plotted for perplexity ", p)
     return
 
+def plot_rsf_means(rsf_df, FTR_HDRS, fname="means_of_rsfs.png"):
+    #pdb.set_trace()
+    liq_means = rsf_df[rsf_df["y"] == 1].mean()
+    liq_stds  = rsf_df[rsf_df["y"] == 1].std()
+    ice_means = rsf_df[rsf_df["y"] == 0].mean()
+    ice_stds  = rsf_df[rsf_df["y"] == 0].std()
+    mus = [float(s[2:]) for s in FTR_HDRS]
+    plt.errorbar(mus, liq_means[FTR_HDRS], liq_stds[FTR_HDRS], capsize=3, label="liq")
+    plt.errorbar(mus, ice_means[FTR_HDRS], ice_stds[FTR_HDRS], capsize=3, label="ice")
+    plt.legend(loc="upper right")
+    plt.savefig(fname)
+    plt.clf()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--plot_hist", action="store_true")
     parser.add_argument("--plot_tsne", action="store_true")
+    parser.add_argument("--plot_rsf_means", action="store_true")
     parser.add_argument("--tsne_fname", type=str, default="")
     parser.add_argument("--tsne_fake_rsfs", action="store_true")
     parser.add_argument("--dir_suffix", default="")
@@ -91,6 +105,9 @@ def main():
             pseudo_X["y"] = rsf_df["y"]
             rsf_df = pseudo_X
         plot_rsf_tsne(rsf_df, FTR_HDRS, fname=opts.tsne_fname)
+
+    if opts.plot_rsf_means:
+        plot_rsf_means(rsf_df, FTR_HDRS)
     return
 
 if __name__ == "__main__":

@@ -1,0 +1,24 @@
+LAMMPS (24 Oct 2018)
+units real
+variable L equal 3.0542917692467419e+01
+region sim_box block 0 ${L} 0 ${L} 0 ${L} units box
+region sim_box block 0 30.5429176924674 0 ${L} 0 ${L} units box
+region sim_box block 0 30.5429176924674 0 30.5429176924674 0 ${L} units box
+region sim_box block 0 30.5429176924674 0 30.5429176924674 0 30.5429176924674 units box
+create_box 1 sim_box
+Created orthogonal box = (0 0 0) to (30.5429 30.5429 30.5429)
+  1 by 1 by 1 MPI processor grid
+
+read_dump table_s1_cartesian.dat 100 x y z
+  orthogonal box = (0.0570574 0.0658842 0.0621162) to (26.4509 30.5429 28.7961)
+  0 atoms before read
+  1681 atoms in snapshot
+  0 atoms purged
+  0 atoms replaced
+  0 atoms trimmed
+  0 atoms added
+  0 atoms after read
+compute myrdfs all rdf 60 cutoff 6
+fix 1 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector
+#dump custom c_myrdfs
+Total wall time: 0:00:00
