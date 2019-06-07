@@ -1,5 +1,5 @@
 LAMMPS (24 Oct 2018)
-units real
+units metal
 variable L equal 3.0542917692467419e+01
 region sim_box block 0 ${L} 0 ${L} 0 ${L} units box
 region sim_box block 0 30.5429176924674 0 ${L} 0 ${L} units box
@@ -8,17 +8,26 @@ region sim_box block 0 30.5429176924674 0 30.5429176924674 0 30.5429176924674 un
 create_box 1 sim_box
 Created orthogonal box = (0 0 0) to (30.5429 30.5429 30.5429)
   1 by 1 by 1 MPI processor grid
+mass 1 18.01528
 
-read_dump table_s1_cartesian.dat 100 x y z
-  orthogonal box = (0.0570574 0.0658842 0.0621162) to (26.4509 30.5429 28.7961)
-  0 atoms before read
-  1681 atoms in snapshot
-  0 atoms purged
-  0 atoms replaced
-  0 atoms trimmed
-  0 atoms added
-  0 atoms after read
+#read_dump dump_250K_10000.dat 0 x y z box yes add keep
+comm_modify mode single cutoff 9
 compute myrdfs all rdf 60 cutoff 6
-fix 1 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector
-#dump custom c_myrdfs
-Total wall time: 0:00:00
+fix 3 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector
+rerun dump_250K_10000.dat dump x y z box yes add keep
+Neighbor list info ...
+  update every 1 steps, delay 10 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 0
+  ghost atom cutoff = 9
+  binsize = 30.5429, bins = 1 1 1
+  1 neighbor lists, perpetual/occasional/extra = 0 1 0
+  (1) compute rdf, occasional
+      attributes: half, newton on, cut 8
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d/newton
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.053 | 3.053 | 3.053 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+ERROR: Lost atoms: original 0 current 768 (../thermo.cpp:441)
+Last command: rerun dump_250K_10000.dat dump x y z box yes add keep

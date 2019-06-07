@@ -1,8 +1,11 @@
-units real
+units metal
 variable L equal 3.0542917692467419e+01
 region sim_box block 0 ${L} 0 ${L} 0 ${L} units box
 create_box 1 sim_box
+mass 1 18.01528
 
-read_dump table_s1_cartesian.dat 100 x y z
+#read_dump dump_250K_10000.dat 0 x y z box yes add keep
+comm_modify mode single cutoff 9
 compute myrdfs all rdf 60 cutoff 6
-fix 1 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector 
+fix 3 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector 
+rerun dump_250K_10000.dat dump x y z box yes add keep
