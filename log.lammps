@@ -14,7 +14,7 @@ mass 1 18.01528
 comm_modify mode single cutoff 9
 compute myrdfs all rdf 60 cutoff 6
 fix 3 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector
-rerun dump_250K_10000.dat dump x y z box yes add keep
+rerun ice_dump_250K_10000.dat dump x y z box yes add keep
 Neighbor list info ...
   update every 1 steps, delay 10 steps, check yes
   max neighbors/atom: 2000, page size: 100000
@@ -30,4 +30,4 @@ Neighbor list info ...
 Per MPI rank memory allocation (min/avg/max) = 3.053 | 3.053 | 3.053 Mbytes
 Step Temp E_pair E_mol TotEng Press 
 ERROR: Lost atoms: original 0 current 768 (../thermo.cpp:441)
-Last command: rerun dump_250K_10000.dat dump x y z box yes add keep
+Last command: rerun ice_dump_250K_10000.dat dump x y z box yes add keep
