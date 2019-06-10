@@ -44,4 +44,34 @@ def pseudo_rsfs_data(X,y,hdrs):
         pseudo_X[hdr] = np.concatenate((pseudo_ice, pseudo_liq),axis=None)
     return pseudo_X
 
+def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, save_fname=""):
+    rdfs = pd.read_csv(rdf_fname, skiprows=4, names=["mu", "g"], delim_whitespace=True, usecols=[1,2])
+    sim_vol = 1
+    natoms = 0
+    cartf = open(cart_fname)
+    for i, line in enumerate(cartf):
+        if i==3:
+            natoms = int(line)
+        elif i>4 and i<8:
+            dim = [float(x) for x in line.split()]
+            sim_vol *= dim[1] - dim[0]
+        elif i>8:
+            break
+    density = natoms/sim_vol
+    
+    pdb.set_trace()
+    mean_rsfs = rdfs.copy()
+    omega = 4/3*np.pi*((rdfs["mu"] + 1.25 * sigma)**3 - (rdfs["mu"] - 1.25 * sigma)**3)
+    mean_rsfs["g"] = mean_rsfs["g"] * density * omega
+    return
+
+rdf_fname = "ice.rdf"
+cart_fname = "ice_dump_250K_10000.dat"
+pseudo_rsfs_from_rdf(rdf_fname, cart_fname, .02)
+#parser = argparse.ArgumentParser()
+#parser.add_argument("--plot_hist", action="store_true")
+#opts = parser.parse_args()
+
+
+
 

@@ -12,9 +12,9 @@ mass 1 18.01528
 
 #read_dump dump_250K_10000.dat 0 x y z box yes add keep
 comm_modify mode single cutoff 9
-compute myrdfs all rdf 60 cutoff 6
+compute myrdfs all rdf 61 cutoff 6.1
 fix 3 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector
-rerun ice_dump_250K_10000.dat dump x y z box yes add keep
+rerun liq_dump_250K_10000.dat dump x y z box yes add keep
 Neighbor list info ...
   update every 1 steps, delay 10 steps, check yes
   max neighbors/atom: 2000, page size: 100000
@@ -23,11 +23,11 @@ Neighbor list info ...
   binsize = 30.5429, bins = 1 1 1
   1 neighbor lists, perpetual/occasional/extra = 0 1 0
   (1) compute rdf, occasional
-      attributes: half, newton on, cut 8
+      attributes: half, newton on, cut 8.1
       pair build: half/bin/atomonly/newton
       stencil: half/bin/3d/newton
       bin: standard
-Per MPI rank memory allocation (min/avg/max) = 3.053 | 3.053 | 3.053 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 3.043 | 3.043 | 3.043 Mbytes
 Step Temp E_pair E_mol TotEng Press 
 ERROR: Lost atoms: original 0 current 768 (../thermo.cpp:441)
-Last command: rerun ice_dump_250K_10000.dat dump x y z box yes add keep
+Last command: rerun liq_dump_250K_10000.dat dump x y z box yes add keep
