@@ -101,23 +101,37 @@ def plot_SVM_confidence(X, y, sep_val_confidence=False, X_val=None, y_val=None, 
 
 X_train, y_train, X_val, y_val, hdrs = compile_rsfs_data()
 #pdb.set_trace()
-pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs)
+#pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs)
 #scaler, X_train = rsf_load_data.scale_data(X_train)
-#pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
 #validation_curve(pseudo_X, y_train, "pseudorsfs_linearsvm_validation.png")
 #learning_curve(pseudo_X, y_train, fname="pseudorsfs_linearsvm_learning.png")
+pdb.set_trace()
+liq_rdf_fname = "liq.rdf"
+liq_cart_fname = "liq_dump_250K_10000.dat"
+liq_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(liq_rdf_fname, liq_cart_fname, .02)
+ice_rdf_fname = "ice.rdf"
+ice_cart_fname = "ice_dump_250K_10000.dat"
+ice_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(ice_rdf_fname, ice_cart_fname, .02)
+# label = 1 if molec is in liquid phase
+#liq_pseudo["y"] = 1
+#ice_pseudo["y"] = 0
+# form one data set with both labels
+pseudo_X = pd.concat([liq_pseudo, ice_pseudo], ignore_index=True)
+plot_SVM_confidence(pseudo_X, y_train, 
+                    sep_val_confidence=True,
+                    #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
+                    X_val=X_val, y_val=y_val, 
+                    #nbins=200,
+                    fname="fake_from_rdf_confidence_no_whiten.png", 
+                    title="Decision function for Linear SVM trained on fake RSFs from rdfs, non-whitened")
+pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
+print("simple svm: train on pseudo from rdf, val on 2nd timestamp")
+simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_val), y_val)
 
-#plot_SVM_confidence(pseudo_X, y_train, 
-#                    sep_val_confidence=True,
-#                    #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
-#                    X_val=X_val, y_val=y_val, 
-#                    #nbins=200,
-#                    fname="fake_confidence_no_whiten.png", 
-#                    title="Decision function for Linear SVM trained on fake RSFs, non-whitened")
-plot_SVM_confidence(X_train, y_train,
-                    X_val=pseudo_X, y_val=y_train,
-                    fname="confidence_on_fake.png", 
-                    title="Decision function for Linear SVM trained on fake rsfs")
+#plot_SVM_confidence(X_train, y_train,
+#                    X_val=pseudo_X, y_val=y_train,
+#                    fname="confidence_on_fake.png", 
+#                    title="Decision function for Linear SVM trained on fake rsfs")
 #simple_SVM(X_train, y_train, X_val, y_val)
 #simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_train), y_train)
 #simple_SVM(X_train, y_train, scaler.transform(X_val), y_val)

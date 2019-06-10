@@ -44,7 +44,7 @@ def pseudo_rsfs_data(X,y,hdrs):
         pseudo_X[hdr] = np.concatenate((pseudo_ice, pseudo_liq),axis=None)
     return pseudo_X
 
-def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, save_fname=""):
+def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, n=768, save_fname=""):
     rdfs = pd.read_csv(rdf_fname, skiprows=4, names=["mu", "g"], delim_whitespace=True, usecols=[1,2])
     sim_vol = 1
     natoms = 0
@@ -59,11 +59,15 @@ def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, save_fname=""):
             break
     density = natoms/sim_vol
     
-    pdb.set_trace()
     mean_rsfs = rdfs.copy()
     omega = 4/3*np.pi*((rdfs["mu"] + 1.25 * sigma)**3 - (rdfs["mu"] - 1.25 * sigma)**3)
     mean_rsfs["g"] = mean_rsfs["g"] * density * omega
-    return
+    pseudo_X = pd.DataFrame()
+    for i, row in mean_rsfs.iterrows():
+        ftr_name = "mu%.2f" % (row["mu"] - .05)
+        pseudo = np.random.normal(loc=row["g"], scale=sigma, size=n)
+        pseudo_X[ftr_name] = pseudo
+    return pseudo_X
 
 if __name__ == "__main__":
     rdf_fname = "ice.rdf"
