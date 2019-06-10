@@ -65,12 +65,13 @@ def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, save_fname=""):
     mean_rsfs["g"] = mean_rsfs["g"] * density * omega
     return
 
-rdf_fname = "ice.rdf"
-cart_fname = "ice_dump_250K_10000.dat"
-pseudo_rsfs_from_rdf(rdf_fname, cart_fname, .02)
-#parser = argparse.ArgumentParser()
-#parser.add_argument("--plot_hist", action="store_true")
-#opts = parser.parse_args()
+if __name__ == "__main__":
+    rdf_fname = "ice.rdf"
+    cart_fname = "ice_dump_250K_10000.dat"
+    pseudo_rsfs_from_rdf(rdf_fname, cart_fname, .02)
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument("--plot_hist", action="store_true")
+    #opts = parser.parse_args()
 
 
 
