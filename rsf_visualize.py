@@ -106,7 +106,7 @@ def main():
 
     rsf_df, FTR_HDRS = rsf_load_data.load_rsfs_df()
     if opts.plot_hist:
-        plot_rsf_histograms(rsf_df, FTR_HDRS, scale=False, log_y=opts.no_log_y, nbins=opts.nbins,
+        plot_rsf_histograms(rsf_df, FTR_HDRS, scale=False, trim=False, log_y=opts.no_log_y, nbins=opts.nbins,
                             dir_suffix=opts.dir_suffix, debug=opts.debug,
                             verbose=opts.not_verbose)
     if opts.plot_tsne:
