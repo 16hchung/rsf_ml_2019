@@ -76,8 +76,8 @@ def plot_rsf_means(rsf_df, FTR_HDRS, fname="means_of_rsfs_minmax_errbars1.png"):
     liq_error = np.array([liq_mins, liq_maxs])
     
     ice_means = rsf_df[rsf_df["y"] == 0].mean()
-    ice_mins  = liq_means - rsf_df[rsf_df["y"] == 0].min()
-    ice_maxs  = rsf_df[rsf_df["y"] == 0].max() - liq_means
+    ice_mins  = ice_means - rsf_df[rsf_df["y"] == 0].min()
+    ice_maxs  = rsf_df[rsf_df["y"] == 0].max() - ice_means
     #ice_stds  = rsf_df[rsf_df["y"] == 0].std()
     ice_error = np.array([ice_mins, ice_maxs])
     
