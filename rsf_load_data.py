@@ -31,7 +31,7 @@ def load_rsfs_df(liq_fname="rsf_data_liq_10000.dat", sol_fname="rsf_data_ice_100
  
     return df, FTR_HDRS
 
-def pseudo_rsfs_data(X,y,hdrs):
+def pseudo_rsfs_data(X,y,hdrs, type_dist="gaus"):
     n, d = X.shape
     pseudo_X = pd.DataFrame()
     for hdr in hdrs:
@@ -39,12 +39,21 @@ def pseudo_rsfs_data(X,y,hdrs):
         ice_mean = X[hdr].loc[y==0].mean()
         liq_var  = X[hdr].loc[y==1].var()
         ice_var  = X[hdr].loc[y==0].var()
-        pseudo_ice = np.random.normal(loc=ice_mean, scale=sqrt(ice_var), size=int(n/2))
-        pseudo_liq = np.random.normal(loc=liq_mean, scale=sqrt(liq_var), size=int(n/2))
+        pseudo_ice = None
+        pseudo_liq = None
+        if type_dist == "gaus":
+            pseudo_ice = np.random.normal(loc=ice_mean, scale=sqrt(ice_var), size=int(n/2))
+            pseudo_liq = np.random.normal(loc=liq_mean, scale=sqrt(liq_var), size=int(n/2))
+        elif type_dist == "exp":
+            pseudo_ice = np.random.exponential(scale=ice_mean, size=int(n/2))
+            pseudo_liq = np.random.exponential(scale=liq_mean, size=int(n/2))
+        else:
+            print("unsupported distribution type")
+            return
         pseudo_X[hdr] = np.concatenate((pseudo_ice, pseudo_liq),axis=None)
     return pseudo_X
 
-def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, n=768, save_fname=""):
+def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, type_dist="gaus", save_fname=""):
     rdfs = pd.read_csv(rdf_fname, skiprows=4, names=["mu", "g"], delim_whitespace=True, usecols=[1,2])
     sim_vol = 1
     natoms = 0
@@ -65,7 +74,16 @@ def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, n=768, save_fname=""):
     pseudo_X = pd.DataFrame()
     for i, row in mean_rsfs.iterrows():
         ftr_name = "mu%.2f" % (row["mu"] - .05)
-        pseudo = np.random.normal(loc=row["g"], scale=sigma, size=n)
+        pseudo = None
+        if type_dist == "gaus":
+            pseudo = np.random.normal(loc=row["g"], scale=sigma, size=natoms)
+        elif type_dist == "exp":
+            pseudo = np.random.exponential(scale=row["g"], size=natoms)
+        #elif type_dist == "half_gaus":
+        #    pass
+        else:
+            print("unsupported distribution type")
+            return
         pseudo_X[ftr_name] = pseudo
     return pseudo_X
 
