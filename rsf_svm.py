@@ -116,7 +116,7 @@ ice_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(ice_rdf_fname, ice_cart_fname, .
 #liq_pseudo["y"] = 1
 #ice_pseudo["y"] = 0
 # form one data set with both labels
-pseudo_X = pd.concat([liq_pseudo, ice_pseudo], ignore_index=True)
+pseudo_X = pd.concat([ice_pseudo, liq_pseudo], ignore_index=True)
 plot_SVM_confidence(pseudo_X, y_train, 
                     sep_val_confidence=True,
                     #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
