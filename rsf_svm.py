@@ -100,9 +100,25 @@ def plot_SVM_confidence(X, y, sep_val_confidence=False, X_val=None, y_val=None, 
     plt.clf()
 
 X_train, y_train, X_val, y_val, hdrs = compile_rsfs_data()
-#pdb.set_trace()
+
+mixed_rdf_fname = "mixed.rdf"
+mixed_cart_fname = "dump_1500K_1960000.dat"
+n_rsfs_to_generate = 768
+
+scaler, X_train = rsf_load_data.scale_data(X_train)
+clf = svm.LinearSVC(C=10)
+clf.fit(X_train, y_train)
+
+for i in range(10):
+    sigma = .01+i*.005
+    mixed_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(mixed_rdf_fname, mixed_cart_fname, sigma, n=n_rsfs_to_generate, type_dist="exp")
+
+    pseudo_predict = clf.predict(scaler.transform(mixed_pseudo))
+    predicted_frac_liq = pseudo_predict.sum() / n_rsfs_to_generate
+    print("percent predicted liquid rsfs with sigma=%.3f: %2f" % (sigma, predicted_frac_liq))
+
+pdb.set_trace()
 pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs, type_dist="exp")
-#scaler, X_train = rsf_load_data.scale_data(X_train)
 #validation_curve(pseudo_X, y_train, "pseudorsfs_linearsvm_validation.png")
 #learning_curve(pseudo_X, y_train, fname="pseudorsfs_linearsvm_learning.png")
 plot_SVM_confidence(pseudo_X, y_train, 

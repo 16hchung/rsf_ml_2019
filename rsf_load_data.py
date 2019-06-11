@@ -53,7 +53,7 @@ def pseudo_rsfs_data(X,y,hdrs, type_dist="gaus"):
         pseudo_X[hdr] = np.concatenate((pseudo_ice, pseudo_liq),axis=None)
     return pseudo_X
 
-def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, type_dist="gaus", save_fname=""):
+def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, type_dist="gaus", n=0, save_fname=""):
     rdfs = pd.read_csv(rdf_fname, skiprows=4, names=["mu", "g"], delim_whitespace=True, usecols=[1,2])
     sim_vol = 1
     natoms = 0
@@ -66,6 +66,8 @@ def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, type_dist="gaus", save_fn
             sim_vol *= dim[1] - dim[0]
         elif i>8:
             break
+    if n<=0:
+        n = natoms
     density = natoms/sim_vol
     
     mean_rsfs = rdfs.copy()
@@ -76,9 +78,9 @@ def pseudo_rsfs_from_rdf(rdf_fname, cart_fname, sigma, type_dist="gaus", save_fn
         ftr_name = "mu%.2f" % (row["mu"] - .05)
         pseudo = None
         if type_dist == "gaus":
-            pseudo = np.random.normal(loc=row["g"], scale=sigma, size=natoms)
+            pseudo = np.random.normal(loc=row["g"], scale=sigma, size=n)
         elif type_dist == "exp":
-            pseudo = np.random.exponential(scale=row["g"], size=natoms)
+            pseudo = np.random.exponential(scale=row["g"], size=n)
         #elif type_dist == "half_gaus":
         #    pass
         else:

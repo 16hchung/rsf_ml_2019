@@ -52,19 +52,21 @@ def plot_rsf_tsne(rsf_df, FTR_HDRS, fname=""):
         os.mkdir(TSNE_DIR)
         print("Directory " , TSNE_DIR ,  " Created ")
 
-    for p in range(10, 200, 10):
-        # run tsne on rsf matrix
-        X_transform = manifold.TSNE(n_components=2, perplexity=p).fit_transform(rsf_df[FTR_HDRS])
-        X_transform_liq = X_transform[rsf_df["y"]==1]
-        X_transform_ice = X_transform[rsf_df["y"]==0]
-        # plot
-        fname = TSNE_DIR + "tsne_perplex_" + str(p) + ".png"
-        plt.scatter(X_transform_liq[:,0], X_transform_liq[:,1], alpha=.5, label="liq", edgecolor="k")
-        plt.scatter(X_transform_ice[:,0], X_transform_ice[:,1], alpha=.5, label="ice", edgecolor="k")
-        plt.legend(loc='upper right')
-        plt.savefig(fname)
-        plt.clf()
-        print("plotted for perplexity ", p)
+    #for p in range(10, 200, 10):
+    # run tsne on rsf matrix
+    X_transform = manifold.TSNE(n_components=2).fit_transform(rsf_df[FTR_HDRS])
+    X_transform_mix = X_transform[rsf_df["y"]==2]
+    X_transform_liq = X_transform[rsf_df["y"]==1]
+    X_transform_ice = X_transform[rsf_df["y"]==0]
+    # plot
+    fname = TSNE_DIR + "tsne_perplex.png"# + str(p) + ".png"
+    plt.scatter(X_transform_mix[:,0], X_transform_mix[:,1], alpha=.5, label="mix", edgecolor="k")
+    plt.scatter(X_transform_liq[:,0], X_transform_liq[:,1], alpha=.5, label="liq", edgecolor="k")
+    plt.scatter(X_transform_ice[:,0], X_transform_ice[:,1], alpha=.5, label="ice", edgecolor="k")
+    plt.legend(loc='upper right')
+    plt.savefig(fname)
+    plt.clf()
+    #print("plotted for perplexity ", p)
     return
 
 def plot_rsf_means(rsf_df, FTR_HDRS, fname="means_of_rsfs_minmax_errbars1.png"):
@@ -97,6 +99,7 @@ def main():
     parser.add_argument("--plot_rsf_means", action="store_true")
     parser.add_argument("--tsne_fname", type=str, default="")
     parser.add_argument("--tsne_fake_rsfs", action="store_true")
+    parser.add_argument("--tsne_fake_fromrdf", action="store_true")
     parser.add_argument("--dir_suffix", default="")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--nbins", type=int, default=100)
@@ -114,6 +117,13 @@ def main():
             pseudo_X = rsf_load_data.pseudo_rsfs_data(rsf_df[FTR_HDRS], rsf_df["y"], FTR_HDRS)
             pseudo_X["y"] = rsf_df["y"]
             rsf_df = pseudo_X
+        elif opts.tsne_fake_fromrdf:
+            mixed_rdf_fname = "mixed.rdf"
+            mixed_cart_fname = "dump_1500K_1960000.dat"
+            n_rsfs_to_generate = 768
+            mixed_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(mixed_rdf_fname, mixed_cart_fname, .02, n=n_rsfs_to_generate, type_dist="exp")
+            mixed_pseudo["y"] = 2
+            rsf_df = pd.concat([rsf_df, mixed_pseudo], ignore_index=True)
         plot_rsf_tsne(rsf_df, FTR_HDRS, fname=opts.tsne_fname)
 
     if opts.plot_rsf_means:
