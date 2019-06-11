@@ -119,7 +119,7 @@ def main():
             rsf_df = pseudo_X
         elif opts.tsne_fake_fromrdf:
             mixed_rdf_fname = "mixed.rdf"
-            mixed_cart_fname = "dump_1500K_1960000.dat"
+            mixed_cart_fname = "dump_250K_1960000.dat"
             n_rsfs_to_generate = 768
             mixed_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(mixed_rdf_fname, mixed_cart_fname, .02, n=n_rsfs_to_generate, type_dist="exp")
             mixed_pseudo["y"] = 2

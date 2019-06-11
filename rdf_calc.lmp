@@ -8,5 +8,5 @@ mass 1 18.01528
 comm_modify mode single cutoff 9
 compute myrdfs all rdf 61 cutoff 6.1
 fix 3 all ave/time 1 1 100 c_myrdfs[*] file tmp.rdf mode vector 
-rerun dump_1500K_1960000.dat dump x y z box yes add keep
+rerun dump_250K_1960000.dat dump x y z box yes add keep
 #rerun liq_dump_250K_10000.dat dump x y z box yes add keep
