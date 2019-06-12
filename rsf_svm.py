@@ -30,10 +30,10 @@ def scale_data(X):
 
 
 def simple_SVM(X_train, y_train, X_val, y_val):
-    clf = svm.LinearSVC(C=10)
+    clf = svm.LinearSVC()#C=10)
     clf.fit(X_train, y_train)
     val_ypred = clf.predict(X_val)
-
+    print(np.sum(np.abs(val_ypred - y_val)))
     err = np.sum(np.abs(val_ypred - y_val)) / X_val.shape[0]
     print("Linear SVM:")# w/o normalization nor regularization:")
     print("    trained on pseudo, validated on 1st timestamp")
@@ -101,6 +101,7 @@ def plot_SVM_confidence(X, y, sep_val_confidence=False, X_val=None, y_val=None, 
 
 X_train, y_train, X_val, y_val, hdrs = compile_rsfs_data()
 
+'''
 mixed_rdf_fname = "mixed.rdf"
 mixed_cart_fname = "dump_250K_1960000.dat"
 n_rsfs_to_generate = 768
@@ -114,11 +115,11 @@ mixed_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(mixed_rdf_fname, mixed_cart_fn
 pseudo_predict = clf.predict(scaler.transform(mixed_pseudo))
 predicted_frac_liq = pseudo_predict.sum() / n_rsfs_to_generate
 print("percent predicted liquid rsfs with sigma=%.3f: %2f" % (.02, predicted_frac_liq))
-
-pdb.set_trace()
-pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs, type_dist="exp")
+'''
+#pseudo_X = rsf_load_data.pseudo_rsfs_data(X_train, y_train, hdrs, type_dist="exp")
 #validation_curve(pseudo_X, y_train, "pseudorsfs_linearsvm_validation.png")
 #learning_curve(pseudo_X, y_train, fname="pseudorsfs_linearsvm_learning.png")
+'''
 plot_SVM_confidence(pseudo_X, y_train, 
                     sep_val_confidence=True,
                     #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
@@ -126,10 +127,10 @@ plot_SVM_confidence(pseudo_X, y_train,
                     #nbins=200,
                     fname="fake_confidence_expsample_no_whiten.png", 
                     title="Decision function for Linear SVM trained on fake RSFs, sampled from exp")
-
-pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
+'''
+#pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
 print("simple svm: train on pseudo sampled from exp, val on 2nd timestamp")
-simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_val), y_val)
+#simple_SVM(pseudo_X, y_train, pseudo_scaler.transform(X_val), y_val)
 
 #pdb.set_trace()
 
@@ -142,8 +143,9 @@ ice_rdf_fname = "ice.rdf"
 ice_cart_fname = "ice_dump_250K_10000.dat"
 ice_pseudo = rsf_load_data.pseudo_rsfs_from_rdf(ice_rdf_fname, ice_cart_fname, .02, type_dist="exp")
 pseudo_X = pd.concat([ice_pseudo, liq_pseudo], ignore_index=True)
-
+pdb.set_trace()
 ### PLOT DECISION FUNCTION WITH PSUEDO ###
+'''
 plot_SVM_confidence(pseudo_X, y_train, 
                     sep_val_confidence=True,
                     #X_val=pseudo_scaler.transform(X_val), y_val=y_val, 
@@ -151,7 +153,7 @@ plot_SVM_confidence(pseudo_X, y_train,
                     #nbins=200,
                     fname="fake_from_rdf_confidence_expsample_no_whiten.png", 
                     title="Decision function for Linear SVM trained on fake RSFs from rdfs, sampled from exp")
-
+'''
 ### SIMPLE SVM AND SCALING WITH PSEUDO FROM RDFS ###
 pseudo_scaler, pseudo_X = rsf_load_data.scale_data(pseudo_X)
 print("simple svm: train on pseudo from rdf, val on 2nd timestamp")
