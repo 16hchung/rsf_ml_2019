@@ -94,22 +94,27 @@ def plot_rsf_means(rsf_df, FTR_HDRS, fname="means_of_rsfs_minmax_errbars1.png"):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--liq_rsfs", type=str, default="")
+    parser.add_argument("--ice_rsfs", type=str, default="")
     parser.add_argument("--plot_hist", action="store_true")
-    parser.add_argument("--plot_tsne", action="store_true")
-    parser.add_argument("--plot_rsf_means", action="store_true")
-    parser.add_argument("--tsne_fname", type=str, default="")
-    parser.add_argument("--tsne_fake_rsfs", action="store_true")
-    parser.add_argument("--tsne_fake_fromrdf", action="store_true")
     parser.add_argument("--dir_suffix", default="")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--nbins", type=int, default=100)
     parser.add_argument("--no_log_y", action="store_false")
     parser.add_argument("--not_verbose", action="store_false")
+    parser.add_argument("--plot_tsne", action="store_true")
+    parser.add_argument("--plot_rsf_means", action="store_true")
+    parser.add_argument("--tsne_fname", type=str, default="")
+    parser.add_argument("--tsne_fake_rsfs", action="store_true")
+    parser.add_argument("--tsne_fake_fromrdf", action="store_true")
     opts = parser.parse_args()
 
-    rsf_df, FTR_HDRS = rsf_load_data.load_rsfs_df()
+    rsf_df, FTR_HDRS = (rsf_load_data.load_rsfs_df(liq_fname=opts.liq_rsfs, sol_fname=opts.ice_rsfs)
+            if opts.liq_rsfs and opts.ice_rsfs
+            else rsf_load_data.load_rsfs_df()
+            )
     if opts.plot_hist:
-        plot_rsf_histograms(rsf_df, FTR_HDRS, scale=False, trim=False, log_y=opts.no_log_y, nbins=opts.nbins,
+        plot_rsf_histograms(rsf_df, FTR_HDRS, scale=True, trim=False, log_y=opts.no_log_y, nbins=opts.nbins,
                             dir_suffix=opts.dir_suffix, debug=opts.debug,
                             verbose=opts.not_verbose)
     if opts.plot_tsne:
