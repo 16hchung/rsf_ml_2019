@@ -9,7 +9,7 @@ from sklearn import preprocessing
 from sklearn import model_selection
 from sklearn import manifold
 import pdb
-import rsf_load_data
+import .load_data
 
 def plot_rsf_histograms(rsf_df, FTR_HDRS, scale=True, trim=True, log_y=True, nbins=100, dir_suffix="", debug=False, verbose=True):
     HIST_DIR = "rsf_histograms_" + dir_suffix + "/"
