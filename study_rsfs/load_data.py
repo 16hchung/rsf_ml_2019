@@ -8,7 +8,6 @@ class RSFDataLoader:
     Y_HDR = 'y'
     LIQ_LBL = 1
     ICE_LBL = 0
-    NO_LBL = 2
     NROWS_SKIP = 1
     _FTR_HDRS = None
 
@@ -25,7 +24,8 @@ class RSFDataLoader:
             self._FTR_HDRS = ["mu%.2f" % number for number in mu]
         return self._FTR_HDRS
 
-    def scale_data(self, X):
+    @classmethod
+    def scale_data(cls, X):
         scaler = preprocessing.StandardScaler().fit(X)
         return scaler, scaler.transform(X)
 
@@ -34,7 +34,7 @@ class RSFDataLoader:
         df = pd.read_csv(fname, skiprows=self.NROWS_SKIP, names=self.FTR_HDRS, delim_whitespace=True)
         
         y = None
-        if label:
+        if label != None:
             y = pd.Series([label]*df.shape[0])
         return df, y
 
