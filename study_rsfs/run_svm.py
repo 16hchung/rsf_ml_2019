@@ -38,7 +38,8 @@ class SVMRunner():
             err = np.sum(np.abs(val_ypred - y_val)) / X_val.shape[0]
             print("\terror was {}%".format(err*100))
             
-    def plot_confidence(self, plot_train=False, X_val=[], y_val=[], trim_std=False, nbins=100, fname=None, title="Decision Function"):
+    def plot_confidence(self, plot_train=False, X_val=[], y_val=[], trim_std=False, log_scale=False,
+                        normed=True, nbins=100, fname=None, title="Decision Function"):
         plt.clf()
         import pdb;pdb.set_trace()
         maxconf = 0; minconf = 0
@@ -52,9 +53,9 @@ class SVMRunner():
         bins = np.linspace(minconf, maxconf, nbins)
         
         if plot_train:
-            self._plot_calculated_confidence(bins, conf_train, self.y_train, 'train')
+            self._plot_calculated_confidence(bins, conf_train, self.y_train, log_scale, normed, 'train')
         if len(X_val):
-            self._plot_calculated_confidence(bins, conf_val, y_val, 'mixed')
+            self._plot_calculated_confidence(bins, conf_val, y_val, log_scale, normed, 'mixed')
             
         plt.title(title)
         plt.legend(loc="best")
@@ -69,21 +70,21 @@ class SVMRunner():
         confidence = self.clf.decision_function(X)
         if trim:
             mean = confidence.mean()
-            maxconf = mean + confidence.std() * trim
-            minconf = mean - confidence.std() * trim
+            maxconf = mean + trim #* confidence.std()
+            minconf = mean - trim #* confidence.std()
         else:
             maxconf = confidence.max()
             minconf = confidence.min()
         return confidence, maxconf, minconf
     
-    def _plot_calculated_confidence(self, bins, confidence, y=[], label_prefix=''):
+    def _plot_calculated_confidence(self, bins, confidence, y, log_scale, normed, label_prefix):
         if len(y):
-            plt.hist(confidence[y==RSFDataLoader.LIQ_LBL], bins=bins, density=True, 
-                     alpha=.5, label='{}_liq'.format(label_prefix), edgecolor='k')
-            plt.hist(confidence[y==RSFDataLoader.ICE_LBL], bins=bins, density=True, 
-                     alpha=.5, label='{}_ice'.format(label_prefix), edgecolor='k')
+            plt.hist(confidence[y==RSFDataLoader.LIQ_LBL], bins=bins, density=normed, 
+                     alpha=.5, label='{}_liq'.format(label_prefix), edgecolor='k', log=log_scale)
+            plt.hist(confidence[y==RSFDataLoader.ICE_LBL], bins=bins, density=normed, 
+                     alpha=.5, label='{}_ice'.format(label_prefix), edgecolor='k', log=log_scale)
         else:
-            plt.hist(confidence, bins=bins, density=True, alpha=.5, label=label_prefix, edgecolor='k')
+            plt.hist(confidence, bins=bins, density=normed, alpha=.5, label=label_prefix, edgecolor='k', log=log_scale)
             
 
 def plot_scores(train_scores, test_scores, title, xvals, fname, pltfxn, xlabel, ylabel="score"):
